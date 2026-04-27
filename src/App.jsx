@@ -1,32 +1,47 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login"; // Person 1 will add this
-import { useSelector } from "react-redux";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+// Page Imports
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+
+// Component Imports
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  // Get auth state from Redux (Person 1 will manage this)
-  const isLoggedIn = useSelector((state) => state.auth?.loggedIn);
+  // We pull the authentication status from our Redux store
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   return (
     <Router>
       <Routes>
-        {/* Login page */}
+        {/* 1. LOGIN ROUTE: Accessible by everyone */}
         <Route path="/login" element={<Login />} />
-
-        {/* Dashboard (protected) */}
-        <Route
-          path="/dashboard"
+        
+        {/* 2. DASHBOARD ROUTE: Wrapped in our ProtectedRoute guard */}
+        <Route 
+          path="/dashboard" 
           element={
-            isLoggedIn ? <Dashboard /> : <Navigate to="/login" replace />
-          }
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
         />
 
-        {/* Default redirect to dashboard or login */}
-        <Route
-          path="*"
+        {/* 3. REDIRECT LOGIC: 
+             If a user goes to any other link (like the homepage /):
+             - If logged in: Send to Dashboard
+             - If logged out: Send to Login 
+        */}
+        <Route 
+          path="*" 
           element={
-            isLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
-          }
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } 
         />
       </Routes>
     </Router>
