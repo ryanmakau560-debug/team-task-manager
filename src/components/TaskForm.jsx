@@ -1,34 +1,33 @@
-import { useState, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { addTask } from "../redux/taskSlice";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addTask } from '../features/taskSlice';
 
-const TaskForm = () => {
-  const [title, setTitle] = useState("");
+export default function TaskForm() {
+  const [text, setText] = useState('');
   const dispatch = useDispatch();
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!text.trim()) return;
 
-    dispatch(addTask({
-      id: Date.now(),
-      title,
-      status: "Pending"
+    dispatch(addTask({ 
+      id: Date.now(), 
+      text: text, 
+      completed: false 
     }));
-
-    setTitle("");
-  }, [title, dispatch]);
+    
+    setText(''); // Clears the input
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Enter task"
+      <input 
+        type="text" 
+        value={text} 
+        onChange={(e) => setText(e.target.value)} 
+        placeholder="Add a new task..." 
       />
       <button type="submit">Add</button>
     </form>
   );
-};
-
-export default TaskForm;
+}

@@ -1,25 +1,44 @@
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
-import TaskItem from "./TaskItem";
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteTask } from '../features/taskSlice';
 
 const TaskList = () => {
-  const tasks = useSelector(state => state.tasks);
+  const tasks = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
 
-  const filteredTasks = useMemo(() => {
-    return tasks;
-  }, [tasks]);
+  // useCallback keeps this function stable so React.memo doesn't re-render unnecessarily
+  const handleDelete = useCallback((id) => {
+    dispatch(deleteTask(id));
+  }, [dispatch]);
+
+  if (tasks.length === 0) {
+    return <p style={{ color: '#888' }}>No tasks found. Add one above!</p>;
+  }
 
   return (
-    <div>
-      {filteredTasks.length ? (
-        filteredTasks.map(task => (
-          <TaskItem key={task.id} task={task} />
-        ))
-      ) : (
-        <p>No tasks yet</p>
-      )}
-    </div>
+    <ul style={{ listStyle: 'none', padding: 0 }}>
+      {tasks.map((task) => (
+        <li 
+          key={task.id} 
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            padding: '10px', 
+            borderBottom: '1px solid #eee' 
+          }}
+        >
+          <span>{task.text}</span>
+          <button 
+            onClick={() => handleDelete(task.id)}
+            style={{ cursor: 'pointer' }}
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 };
 
-export default TaskList;
+// React.memo optimizes performance by preventing re-renders if props haven't changed
+export default React.memo(TaskList);
