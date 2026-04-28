@@ -8,15 +8,26 @@ export default function TaskForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!text) return;
-    dispatch(addTask({ id: Date.now(), text, completed: false }));
-    setText('');
+    if (!text.trim()) return;
+
+    dispatch(addTask({ 
+      id: Date.now(), 
+      text: text, 
+      completed: false 
+    }));
+    
+    setText(''); // Clears the input
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-      <input value={text} onChange={(e) => setText(e.target.value)} placeholder="New task..." />
-      <button type="submit">Add Task</button>
+    <form onSubmit={handleSubmit}>
+      <input 
+        type="text" 
+        value={text} 
+        onChange={(e) => setText(e.target.value)} 
+        placeholder="Add a new task..." 
+      />
+      <button type="submit">Add</button>
     </form>
   );
 }
