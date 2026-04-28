@@ -13,7 +13,7 @@ export default function Login() {
 
   return (
     <div>
-      <h1>Login to Lume</h1>
+      <h1>Login to task manager</h1>
       <button onClick={handleLogin}>Log In</button>
     </div>
   );
